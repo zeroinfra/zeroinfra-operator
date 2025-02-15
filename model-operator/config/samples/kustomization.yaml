@@ -1,0 +1,8 @@
+## Append samples of your project ##
+resources:
+- model_v1_model.yaml
+- model_v1_dataset.yaml
+- model_v1_inference.yaml
+- model_v1_training.yaml
+- model_v1_finetuning.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

@@ -1,0 +1,10 @@
+## Append samples of your project ##
+resources:
+- database_v1_mysql.yaml
+- database_v1_mysqlcluster.yaml
+- database_v1_redis.yaml
+- database_v1_rediscluster.yaml
+- database_v1_mongodb.yaml
+- database_v1_mongoreplicaset.yaml
+- database_v1_postgresql.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

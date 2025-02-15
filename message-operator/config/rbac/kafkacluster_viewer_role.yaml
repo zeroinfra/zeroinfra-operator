@@ -1,0 +1,29 @@
+# This rule is not used by the project message-operator itself.
+# It is provided to allow the cluster admin to help manage permissions for users.
+#
+# Grants read-only access to message.zeroinfra.github.com resources.
+# This role is intended for users who need visibility into these resources
+# without permissions to modify them. It is ideal for monitoring purposes and limited-access viewing.
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: message-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: kafkacluster-viewer-role
+rules:
+- apiGroups:
+  - message.zeroinfra.github.com
+  resources:
+  - kafkaclusters
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - message.zeroinfra.github.com
+  resources:
+  - kafkaclusters/status
+  verbs:
+  - get

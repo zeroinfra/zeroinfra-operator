@@ -1,0 +1,9 @@
+apiVersion: storage.zeroinfra.github.com/v1
+kind: ObjectStorage
+metadata:
+  labels:
+    app.kubernetes.io/name: storage-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: objectstorage-sample
+spec:
+  # TODO(user): Add fields here

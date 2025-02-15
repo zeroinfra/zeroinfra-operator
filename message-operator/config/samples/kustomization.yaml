@@ -1,0 +1,7 @@
+## Append samples of your project ##
+resources:
+- message_v1_kafkacluster.yaml
+- message_v1_kafkatopic.yaml
+- message_v1_rocketmqcluster.yaml
+- message_v1_rocketmqtopic.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

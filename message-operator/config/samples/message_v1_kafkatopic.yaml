@@ -1,0 +1,9 @@
+apiVersion: message.zeroinfra.github.com/v1
+kind: KafkaTopic
+metadata:
+  labels:
+    app.kubernetes.io/name: message-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: kafkatopic-sample
+spec:
+  # TODO(user): Add fields here
