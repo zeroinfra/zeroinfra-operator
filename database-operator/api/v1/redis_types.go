@@ -1,47 +1,90 @@
-/*
-Copyright 2025 zeroinfra.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package v1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
-// RedisSpec defines the desired state of Redis.
+// RedisSpec 定义了 Redis 的期望状态
 type RedisSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// +kubebuilder:validation:Required
+	// Redis 镜像
+	Image string `json:"image"`
 
-	// Foo is an example field of Redis. Edit redis_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Redis 端口，默认为 6379
+	Port int32 `json:"port,omitempty"`
+
+	// 密码字符串（直接存储密码）
+	Password string `json:"password,omitempty"`
+
+	// 资源限制
+	Resources Resources `json:"resources,omitempty"`
+
+	// 环境变量注入（key-value 格式）
+	EnvVars map[string]string `json:"envVars,omitempty"`
+
+	// 持久化存储配置（可选）
+	PersistentVolume PersistentVolumeSpec `json:"persistentVolume,omitempty"`
 }
 
-// RedisStatus defines the observed state of Redis.
+// Resources 定义了 Redis 的资源限制
+type Resources struct {
+	Limits   ResourceLimit `json:"limits,omitempty"`
+	Requests ResourceLimit `json:"requests,omitempty"`
+}
+
+// ResourceLimit 定义了 CPU 和内存的限制
+type ResourceLimit struct {
+	CPU    string `json:"cpu,omitempty"`
+	Memory string `json:"memory,omitempty"`
+}
+
+// PersistentVolumeSpec 定义了持久化存储的配置
+type PersistentVolumeSpec struct {
+	// 存储大小
+	Size string `json:"size,omitempty"`
+	// 存储类
+	StorageClass string `json:"storageClass,omitempty"`
+}
+
+// RedisConditionType 定义了 Redis 的状态类型（枚举）
+type RedisConditionType string
+
+const (
+	// RedisReady 表示 Redis 实例是否就绪
+	RedisReady RedisConditionType = "RedisReady"
+
+	// RedisConfigured 表示 Redis 配置是否完成
+	RedisConfigured RedisConditionType = "RedisConfigured"
+
+	// RedisPersistentVolumeBound 表示持久化卷是否绑定成功
+	RedisPersistentVolumeBound RedisConditionType = "RedisPersistentVolumeBound"
+)
+
+// RedisCondition 定义了 Redis 的条件状态
+type RedisCondition struct {
+	Type               RedisConditionType     `json:"type"`
+	Status             corev1.ConditionStatus `json:"status"`
+	LastTransitionTime metav1.Time            `json:"lastTransitionTime,omitempty"`
+	Reason             string                 `json:"reason,omitempty"`
+	Message            string                 `json:"message,omitempty"`
+}
+
+// RedisStatus 定义了 Redis 的观测状态
 type RedisStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Pod 名称
+	PodName string `json:"podName,omitempty"`
+
+	// 条件列表
+	Conditions []RedisCondition `json:"conditions,omitempty"`
 }
 
-// +kubebuilder:object:root=true
-// +kubebuilder:subresource:status
+//+kubebuilder:object:root=true
+//+kubebuilder:subresource:status
+//+kubebuilder:printcolumn:name="RedisReady",type="string",JSONPath=".status.conditions[?(@.type==\"RedisReady\")].status"
+//+kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 
-// Redis is the Schema for the redis API.
+// Redis 是自定义资源对象
 type Redis struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -50,9 +93,9 @@ type Redis struct {
 	Status RedisStatus `json:"status,omitempty"`
 }
 
-// +kubebuilder:object:root=true
+//+kubebuilder:object:root=true
 
-// RedisList contains a list of Redis.
+// RedisList 是 Redis 资源的列表
 type RedisList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`

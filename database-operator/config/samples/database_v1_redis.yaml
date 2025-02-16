@@ -6,4 +6,18 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
   name: redis-sample
 spec:
-  # TODO(user): Add fields here
+  image: redis:7.4.2-bookworm
+  port: 6379
+  password: "my-secret-password"
+  resources:
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+    requests:
+      cpu: "0.5"
+      memory: "1Gi"
+  envVars:
+    REDIS_LOG_LEVEL: debug
+  persistentVolume:
+    size: 1Gi
+    storageClass: standard
